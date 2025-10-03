@@ -1,0 +1,161 @@
+apiVersion: barmancloud.cnpg.io/v1
+kind: ObjectStore
+metadata:
+  name: db
+  namespace: prod
+spec:
+  retentionPolicy: 7d
+  configuration:
+    destinationPath: s3://typie-postgres/prod
+    s3Credentials:
+      accessKeyId:
+        name: db-aws
+        key: AWS_ACCESS_KEY_ID
+      secretAccessKey:
+        name: db-aws
+        key: AWS_SECRET_ACCESS_KEY
+    data:
+      compression: bzip2
+    wal:
+      compression: zstd
+      maxParallel: 8
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: db
+  namespace: prod
+spec:
+  imageCatalogRef:
+    apiGroup: postgresql.cnpg.io
+    kind: ClusterImageCatalog
+    name: postgresql
+    major: 17
+
+  bootstrap:
+    initdb:
+      walSegmentSize: 256
+      secret:
+        name: db-credentials
+
+  managed:
+    roles:
+      - name: app
+        login: true
+        passwordSecret:
+          name: db-credentials
+
+  primaryUpdateMethod: switchover
+
+  instances: 3
+  enablePDB: true
+
+  resources:
+    requests:
+      cpu: "2"
+    limits:
+      memory: 16Gi
+
+  postgresql:
+    parameters:
+      max_connections: "1000"
+      wal_buffers: 512MB
+      wal_keep_size: 4GB
+      max_wal_size: 16GB
+      min_wal_size: 4GB
+      wal_writer_delay: 1000ms
+      wal_writer_flush_after: 64MB
+      checkpoint_timeout: 30min
+      checkpoint_completion_target: "0.9"
+      shared_buffers: 4GB
+      effective_cache_size: 12GB
+      work_mem: 64MB
+      maintenance_work_mem: 1GB
+      max_worker_processes: "8"
+      max_parallel_workers: "8"
+      max_parallel_workers_per_gather: "4"
+      default_toast_compression: lz4
+      track_activity_query_size: "4096"
+      pg_stat_statements.track: ALL
+      pg_stat_statements.max: "10000"
+      pg_stat_statements.track_utility: "0"
+
+  replicationSlots:
+    highAvailability:
+      enabled: true
+
+  topologySpreadConstraints:
+    - maxSkew: 1
+      topologyKey: kubernetes.io/hostname
+      whenUnsatisfiable: DoNotSchedule
+      labelSelector:
+        matchLabels:
+          cnpg.io/cluster: db
+          cnpg.io/podRole: instance
+
+  storage:
+    storageClass: zfs
+    size: 200Gi
+
+  walStorage:
+    storageClass: zfs
+    size: 50Gi
+
+  plugins:
+    - name: barman-cloud.cloudnative-pg.io
+      isWALArchiver: true
+      parameters:
+        barmanObjectName: db
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Pooler
+metadata:
+  name: db-pooler
+  namespace: prod
+spec:
+  cluster:
+    name: db
+
+  instances: 3
+  type: rw
+
+  template:
+    spec:
+      containers: []
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector:
+            matchLabels:
+              cnpg.io/poolerName: db-pooler
+
+  serviceTemplate:
+    metadata:
+      annotations:
+        external-dns.typie.io/enabled: "true"
+        external-dns.alpha.kubernetes.io/internal-hostname: db.typie.io
+
+  pgbouncer:
+    poolMode: transaction
+    parameters:
+      max_client_conn: "1000"
+      min_pool_size: "20"
+      default_pool_size: "50"
+      reserve_pool_size: "50"
+      server_check_delay: "10"
+      server_login_retry: "0"
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+metadata:
+  name: db
+  namespace: prod
+spec:
+  schedule: "0 0 19 * * *"
+  backupOwnerReference: self
+  cluster:
+    name: db
+  method: plugin
+  pluginConfiguration:
+    name: barman-cloud.cloudnative-pg.io

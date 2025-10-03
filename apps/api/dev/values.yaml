@@ -1,0 +1,20 @@
+fullnameOverride: "api"
+
+replicas: 1
+
+image:
+  name: 509399603331.dkr.ecr.ap-northeast-2.amazonaws.com/api
+
+resources:
+  cpu: 1000m
+  memory: 2Gi
+
+env:
+  - name: PUBLIC_ENVIRONMENT
+    value: "dev"
+  - name: NO_WORKER
+    value: "true"
+
+secrets:
+  - api-aws
+  - api-doppler

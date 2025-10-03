@@ -1,0 +1,147 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: valkey
+  namespace: argocd
+  labels:
+    app.kubernetes.io/part-of: platform
+    app.kubernetes.io/component: cache
+spec:
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
+
+  generators:
+    - list:
+        elements:
+          - env: dev
+            service:
+              hostname: dev.redis.typie.io
+            redis:
+              maxmemory: 256mb
+            replicas: 1
+            resources:
+              cpu: 200m
+              memory: 512Mi
+            storage:
+              size: 10Gi
+
+          - env: prod
+            service:
+              hostname: redis.typie.io
+            redis:
+              maxmemory: 512mb
+            replicas: 3
+            resources:
+              cpu: 500m
+              memory: 1Gi
+            storage:
+              size: 20Gi
+
+  template:
+    metadata:
+      name: valkey-{{.env}}
+      labels:
+        app.kubernetes.io/part-of: platform
+        app.kubernetes.io/component: cache
+        app.kubernetes.io/instance: "{{.env}}"
+    spec:
+      project: default
+
+      source:
+        chart: valkey
+        repoURL: https://charts.bitnami.com/bitnami
+        targetRevision: 3.0.31
+        helm:
+          releaseName: valkey
+          parameters:
+            - name: replica.replicaCount
+              value: "{{.replicas}}"
+          valuesObject:
+            architecture: replication
+
+            commonConfiguration: |
+              maxmemory {{.redis.maxmemory}}
+              maxmemory-policy noeviction
+
+              appendonly yes
+              appendfsync everysec
+
+              save ""
+
+            useHostnames: false
+
+            image:
+              repository: bitnamilegacy/valkey
+
+            auth:
+              enabled: false
+
+            sentinel:
+              enabled: true
+              primarySet: primary
+              image:
+                repository: bitnamilegacy/valkey-sentinel
+              resources:
+                requests:
+                  cpu: 100m
+                limits:
+                  memory: 256Mi
+              service:
+                annotations:
+                  external-dns.typie.io/enabled: "true"
+                  external-dns.alpha.kubernetes.io/internal-hostname: "{{.service.hostname}}"
+
+            primary:
+              replicaCount: 1
+              resources:
+                requests:
+                  cpu: "{{.resources.cpu}}"
+                limits:
+                  memory: "{{.resources.memory}}"
+              persistence:
+                storageClass: zfs
+                size: "{{.storage.size}}"
+              topologySpreadConstraints:
+                - maxSkew: 1
+                  topologyKey: kubernetes.io/hostname
+                  whenUnsatisfiable: DoNotSchedule
+                  labelSelector:
+                    matchLabels:
+                      app.kubernetes.io/name: valkey
+
+            replica:
+              resources:
+                requests:
+                  cpu: "{{.resources.cpu}}"
+                limits:
+                  memory: "{{.resources.memory}}"
+              persistence:
+                storageClass: zfs
+                size: "{{.storage.size}}"
+              topologySpreadConstraints:
+                - maxSkew: 1
+                  topologyKey: kubernetes.io/hostname
+                  whenUnsatisfiable: DoNotSchedule
+                  labelSelector:
+                    matchLabels:
+                      app.kubernetes.io/name: valkey
+
+            volumePermissions:
+              image:
+                repository: bitnamilegacy/os-shell
+
+            kubectl:
+              image:
+                repository: bitnamilegacy/kubectl
+
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: "{{.env}}"
+
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - ServerSideApply=true
+            - CreateNamespace=true

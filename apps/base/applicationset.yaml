@@ -1,0 +1,74 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: apps
+  namespace: argocd
+  labels:
+    app.kubernetes.io/part-of: apps
+spec:
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
+
+  generators:
+    - list:
+        elements:
+          - env: dev
+          - env: prod
+
+  template:
+    metadata:
+      name: apps-{{.env}}
+      labels:
+        app.kubernetes.io/part-of: apps
+        app.kubernetes.io/instance: "{{.env}}"
+    spec:
+      project: default
+
+      sources:
+        - repoURL: https://github.com/penxle/kube
+          targetRevision: HEAD
+          path: charts/app
+          helm:
+            valueFiles:
+              - ../../apps/api/{{.env}}/values.yaml
+              - ../../apps/base/version.{{.env}}.yaml
+
+        - repoURL: https://github.com/penxle/kube
+          targetRevision: HEAD
+          path: apps/api/{{.env}}
+
+        - repoURL: https://github.com/penxle/kube
+          targetRevision: HEAD
+          path: charts/app
+          helm:
+            valueFiles:
+              - ../../apps/website/{{.env}}/values.yaml
+              - ../../apps/base/version.{{.env}}.yaml
+
+        - repoURL: https://github.com/penxle/kube
+          targetRevision: HEAD
+          path: apps/website/{{.env}}
+
+        - repoURL: https://github.com/penxle/kube
+          targetRevision: HEAD
+          path: charts/app
+          helm:
+            valueFiles:
+              - ../../apps/worker/{{.env}}/values.yaml
+              - ../../apps/base/version.{{.env}}.yaml
+
+        - repoURL: https://github.com/penxle/kube
+          targetRevision: HEAD
+          path: apps/worker/{{.env}}
+
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: "{{.env}}"
+
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+          - ServerSideApply=true

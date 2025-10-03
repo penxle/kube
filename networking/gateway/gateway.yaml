@@ -1,0 +1,193 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: http
+  namespace: infra
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt
+spec:
+  gatewayClassName: cilium
+
+  infrastructure:
+    labels:
+      cilium.typie.io/advertise-bgp: "true"
+
+  addresses:
+    - type: IPAddress
+      value: "115.68.42.155"
+
+  listeners:
+    - name: http
+      protocol: HTTP
+      port: 80
+      allowedRoutes:
+        namespaces:
+          from: All
+
+    - name: typie-co-apex-https
+      protocol: HTTPS
+      port: 443
+      hostname: typie.co
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - group: ""
+            kind: Secret
+            name: typie-co-apex-tls
+      allowedRoutes:
+        namespaces:
+          from: All
+
+    - name: typie-co-wildcard-https
+      protocol: HTTPS
+      port: 443
+      hostname: "*.typie.co"
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - group: ""
+            kind: Secret
+            name: typie-co-wildcard-tls
+      allowedRoutes:
+        namespaces:
+          from: All
+
+    - name: typie-dev-apex-https
+      protocol: HTTPS
+      port: 443
+      hostname: typie.dev
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - group: ""
+            kind: Secret
+            name: typie-dev-apex-tls
+      allowedRoutes:
+        namespaces:
+          from: All
+
+    - name: typie-dev-wildcard-https
+      protocol: HTTPS
+      port: 443
+      hostname: "*.typie.dev"
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - group: ""
+            kind: Secret
+            name: typie-dev-wildcard-tls
+      allowedRoutes:
+        namespaces:
+          from: All
+
+    - name: typie-me-apex-https
+      protocol: HTTPS
+      port: 443
+      hostname: typie.me
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - group: ""
+            kind: Secret
+            name: typie-me-apex-tls
+      allowedRoutes:
+        namespaces:
+          from: All
+
+    - name: typie-me-wildcard-https
+      protocol: HTTPS
+      port: 443
+      hostname: "*.typie.me"
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - group: ""
+            kind: Secret
+            name: typie-me-wildcard-tls
+      allowedRoutes:
+        namespaces:
+          from: All
+
+    - name: typie-app-apex-https
+      protocol: HTTPS
+      port: 443
+      hostname: typie.app
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - group: ""
+            kind: Secret
+            name: typie-app-apex-tls
+      allowedRoutes:
+        namespaces:
+          from: All
+
+    - name: typie-app-wildcard-https
+      protocol: HTTPS
+      port: 443
+      hostname: "*.typie.app"
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - group: ""
+            kind: Secret
+            name: typie-app-wildcard-tls
+      allowedRoutes:
+        namespaces:
+          from: All
+
+    - name: typie-net-apex-https
+      protocol: HTTPS
+      port: 443
+      hostname: typie.net
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - group: ""
+            kind: Secret
+            name: typie-net-apex-tls
+      allowedRoutes:
+        namespaces:
+          from: All
+
+    - name: typie-net-wildcard-https
+      protocol: HTTPS
+      port: 443
+      hostname: "*.typie.net"
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - group: ""
+            kind: Secret
+            name: typie-net-wildcard-tls
+      allowedRoutes:
+        namespaces:
+          from: All
+
+    - name: typie-io-apex-https
+      protocol: HTTPS
+      port: 443
+      hostname: typie.io
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - group: ""
+            kind: Secret
+            name: typie-io-apex-tls
+      allowedRoutes:
+        namespaces:
+          from: All
+
+    - name: typie-io-wildcard-https
+      protocol: HTTPS
+      port: 443
+      hostname: "*.typie.io"
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - group: ""
+            kind: Secret
+            name: typie-io-wildcard-tls
+      allowedRoutes:
+        namespaces:
+          from: All

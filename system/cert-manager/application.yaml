@@ -1,0 +1,52 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cert-manager
+  namespace: argocd
+  labels:
+    app.kubernetes.io/part-of: system
+    app.kubernetes.io/component: certificate-management
+spec:
+  project: default
+  sources:
+    - chart: cert-manager
+      repoURL: https://charts.jetstack.io
+      targetRevision: v1.18.2
+      helm:
+        valuesObject:
+          enableCertificateOwnerRef: true
+          crds:
+            enabled: true
+          extraArgs:
+            - --enable-gateway-api=true
+          extraEnv:
+            - name: AWS_REGION
+              value: ap-northeast-2
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: cert-manager-aws
+                  key: AWS_ACCESS_KEY_ID
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: cert-manager-aws
+                  key: AWS_SECRET_ACCESS_KEY
+
+    - repoURL: https://github.com/penxle/kube
+      targetRevision: HEAD
+      path: system/cert-manager
+      directory:
+        exclude: application.yaml
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kube-system
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true

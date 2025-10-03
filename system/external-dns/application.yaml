@@ -1,0 +1,62 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: external-dns
+  namespace: argocd
+  labels:
+    app.kubernetes.io/part-of: system
+    app.kubernetes.io/component: dns-management
+spec:
+  project: default
+
+  sources:
+    - chart: external-dns
+      repoURL: https://kubernetes-sigs.github.io/external-dns
+      targetRevision: 1.19.0
+      helm:
+        valuesObject:
+          provider: aws
+          policy: sync
+          interval: 1m
+          triggerLoopOnEvent: true
+          sources:
+            - ingress
+            - service
+            - gateway-httproute
+          annotationFilter: external-dns.typie.io/enabled=true
+          registry: txt
+          txtOwnerId: k8s
+          txtPrefix: ed-
+          extraArgs:
+            - --aws-zones-cache-duration=1h
+          env:
+            - name: AWS_REGION
+              value: ap-northeast-2
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: external-dns-aws
+                  key: AWS_ACCESS_KEY_ID
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: external-dns-aws
+                  key: AWS_SECRET_ACCESS_KEY
+
+    - repoURL: https://github.com/penxle/kube
+      targetRevision: HEAD
+      path: system/external-dns
+      directory:
+        exclude: application.yaml
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kube-system
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true

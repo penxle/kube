@@ -1,0 +1,17 @@
+fullnameOverride: "website"
+
+replicas: 1
+
+image:
+  name: 509399603331.dkr.ecr.ap-northeast-2.amazonaws.com/website
+
+resources:
+  cpu: 1000m
+  memory: 2Gi
+
+env:
+  - name: PUBLIC_ENVIRONMENT
+    value: "dev"
+
+secrets:
+  - website-doppler

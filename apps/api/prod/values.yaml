@@ -1,0 +1,28 @@
+fullnameOverride: "api"
+
+image:
+  name: 509399603331.dkr.ecr.ap-northeast-2.amazonaws.com/api
+
+resources:
+  cpu: 1000m
+  memory: 2Gi
+
+env:
+  - name: PUBLIC_ENVIRONMENT
+    value: "prod"
+  - name: NO_WORKER
+    value: "true"
+
+secrets:
+  - api-aws
+  - api-doppler
+
+hpa:
+  enabled: true
+  minReplicas: 4
+  maxReplicas: 20
+  targetCPUUtilizationPercentage: 80
+
+pdb:
+  enabled: true
+  minAvailable: "50%"

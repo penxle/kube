@@ -1,0 +1,8 @@
+{
+  "yaml.format.enable": true,
+  "yaml.validate": true,
+  "[yaml]": {
+    "editor.defaultFormatter": "redhat.vscode-yaml",
+    "editor.formatOnSave": true
+  },
+}

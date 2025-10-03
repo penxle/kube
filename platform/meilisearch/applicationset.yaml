@@ -1,0 +1,89 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: meilisearch
+  namespace: argocd
+  labels:
+    app.kubernetes.io/part-of: platform
+    app.kubernetes.io/component: search
+spec:
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
+
+  generators:
+    - list:
+        elements:
+          - env: dev
+            service:
+              hostname: dev.search.typie.io
+            resources:
+              cpu: 200m
+              memory: 1Gi
+            storage:
+              size: 10Gi
+
+          - env: prod
+            service:
+              hostname: search.typie.io
+            resources:
+              cpu: 500m
+              memory: 2Gi
+            storage:
+              size: 20Gi
+
+  template:
+    metadata:
+      name: meilisearch-{{.env}}
+      labels:
+        app.kubernetes.io/part-of: platform
+        app.kubernetes.io/component: search
+        app.kubernetes.io/instance: "{{.env}}"
+    spec:
+      project: default
+      sources:
+        - chart: meilisearch
+          repoURL: https://meilisearch.github.io/meilisearch-kubernetes
+          targetRevision: 0.17.1
+          helm:
+            releaseName: meilisearch
+            valuesObject:
+              image:
+                tag: v1.22.0
+
+              resources:
+                requests:
+                  cpu: "{{.resources.cpu}}"
+                limits:
+                  memory: "{{.resources.memory}}"
+
+              auth:
+                existingMasterKeySecret: meilisearch-master-key
+
+              environment:
+                MEILI_ENV: production
+
+              service:
+                annotations:
+                  external-dns.typie.io/enabled: "true"
+                  external-dns.alpha.kubernetes.io/internal-hostname: "{{.service.hostname}}"
+
+              persistence:
+                enabled: true
+                storageClass: zfs
+                size: "{{.storage.size}}"
+
+        - repoURL: https://github.com/penxle/kube
+          targetRevision: HEAD
+          path: platform/meilisearch/{{.env}}
+
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: "{{.env}}"
+
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - ServerSideApply=true
+            - CreateNamespace=true

@@ -1,0 +1,45 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: tailscale
+  namespace: argocd
+  labels:
+    app.kubernetes.io/part-of: networking
+    app.kubernetes.io/component: vpn
+spec:
+  project: default
+
+  sources:
+    - chart: tailscale-operator
+      repoURL: https://pkgs.tailscale.com/helmcharts
+      targetRevision: 1.88.3
+      helm:
+        valuesObject:
+          operatorConfig:
+            hostname: k8s-operator
+            nodeSelector:
+              node-role.kubernetes.io/control-plane: ""
+            tolerations:
+              - key: node-role.kubernetes.io/control-plane
+                operator: Exists
+
+          apiServerProxyConfig:
+            allowImpersonation: "true"
+
+    - repoURL: https://github.com/penxle/kube
+      targetRevision: HEAD
+      path: networking/tailscale
+      directory:
+        exclude: application.yaml
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: tailscale
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - ServerSideApply=true
+      - CreateNamespace=true

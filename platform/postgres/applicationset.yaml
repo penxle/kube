@@ -1,0 +1,44 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: postgres
+  namespace: argocd
+  labels:
+    app.kubernetes.io/part-of: platform
+    app.kubernetes.io/component: database
+spec:
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
+
+  generators:
+    - list:
+        elements:
+          - env: dev
+          - env: prod
+
+  template:
+    metadata:
+      name: postgres-{{.env}}
+      labels:
+        app.kubernetes.io/part-of: platform
+        app.kubernetes.io/component: database
+        app.kubernetes.io/instance: "{{.env}}"
+    spec:
+      project: default
+
+      source:
+        repoURL: https://github.com/penxle/kube
+        targetRevision: HEAD
+        path: platform/postgres/{{.env}}
+
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: "{{.env}}"
+
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - ServerSideApply=true
+            - CreateNamespace=true
