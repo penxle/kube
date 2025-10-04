@@ -45,6 +45,11 @@ spec:
         login: true
         passwordSecret:
           name: db-credentials
+      - name: root
+        login: true
+        superuser: true
+        passwordSecret:
+          name: db-credentials-root
 
   primaryUpdateMethod: switchover
 
@@ -160,3 +165,15 @@ spec:
   method: plugin
   pluginConfiguration:
     name: barman-cloud.cloudnative-pg.io
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+  name: db
+spec:
+  cluster:
+    name: db
+  name: app
+  owner: app
+  extensions:
+    - name: pgstattuple
