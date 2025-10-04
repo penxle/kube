@@ -157,6 +157,7 @@ spec:
       reserve_pool_size: "10"
       server_check_delay: "10"
       server_login_retry: "0"
+      idle_transaction_timeout: "300"
 ---
 apiVersion: postgresql.cnpg.io/v1
 kind: ScheduledBackup
