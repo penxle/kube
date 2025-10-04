@@ -6,13 +6,14 @@ metadata:
 spec:
   retentionPolicy: 7d
   configuration:
-    destinationPath: s3://typie-postgres/dev
+    destinationPath: s3://postgres/dev
+    endpointURL: https://ada355841e173023d4ac3b5a9ba71669.r2.cloudflarestorage.com
     s3Credentials:
       accessKeyId:
-        name: db-aws
+        name: db-cf
         key: AWS_ACCESS_KEY_ID
       secretAccessKey:
-        name: db-aws
+        name: db-cf
         key: AWS_SECRET_ACCESS_KEY
     data:
       compression: bzip2
