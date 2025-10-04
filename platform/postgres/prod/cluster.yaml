@@ -85,6 +85,12 @@ spec:
       pg_stat_statements.track: ALL
       pg_stat_statements.max: "10000"
       pg_stat_statements.track_utility: "0"
+      autovacuum_max_workers: "8"
+      autovacuum_naptime: 5s
+      autovacuum_vacuum_scale_factor: "0.005"
+      autovacuum_analyze_scale_factor: "0.002"
+      autovacuum_vacuum_cost_delay: 0ms
+      autovacuum_vacuum_cost_limit: "10000"
 
   replicationSlots:
     highAvailability:
