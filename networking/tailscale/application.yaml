@@ -23,9 +23,6 @@ spec:
               - key: node-role.kubernetes.io/control-plane
                 operator: Exists
 
-          apiServerProxyConfig:
-            allowImpersonation: "true"
-
     - repoURL: https://github.com/penxle/kube
       targetRevision: HEAD
       path: networking/tailscale
