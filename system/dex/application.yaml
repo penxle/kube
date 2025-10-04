@@ -1,0 +1,62 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: dex
+  namespace: argocd
+  labels:
+    app.kubernetes.io/part-of: system
+    app.kubernetes.io/component: authentication
+spec:
+  project: default
+  sources:
+    - chart: dex
+      repoURL: https://charts.dexidp.io
+      targetRevision: 0.24.0
+      helm:
+        valuesObject:
+          config:
+            issuer: https://dex.typie.io
+            storage:
+              type: kubernetes
+              config:
+                inCluster: true
+            web:
+              http: 0.0.0.0:5556
+            connectors:
+              - type: google
+                id: google
+                name: Google
+                config:
+                  clientID: $GOOGLE_CLIENT_ID
+                  clientSecret: $GOOGLE_CLIENT_SECRET
+                  redirectURI: https://dex.typie.io/callback
+                  hostedDomains:
+                    - penxle.io
+            staticClients:
+              - id: kubernetes
+                redirectURIs:
+                  - http://localhost:8000
+                  - http://localhost:18000
+                name: Kubernetes
+                public: true
+          envFrom:
+            - secretRef:
+                name: dex-google-oauth
+
+    - repoURL: https://github.com/penxle/kube
+      targetRevision: HEAD
+      path: system/dex
+      directory:
+        exclude: application.yaml
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: dex
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
