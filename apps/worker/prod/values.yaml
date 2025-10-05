@@ -1,7 +1,7 @@
 fullnameOverride: "worker"
 
 image:
-  name: 509399603331.dkr.ecr.ap-northeast-2.amazonaws.com/api
+  name: ghcr.io/penxle/api
 
 resources:
   cpu: 1000m
