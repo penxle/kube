@@ -6,6 +6,8 @@ metadata:
   labels:
     app.kubernetes.io/part-of: observability
     app.kubernetes.io/component: monitoring
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
 

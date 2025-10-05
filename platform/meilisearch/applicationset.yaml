@@ -6,6 +6,8 @@ metadata:
   labels:
     app.kubernetes.io/part-of: platform
     app.kubernetes.io/component: search
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
 spec:
   goTemplate: true
   goTemplateOptions: ["missingkey=error"]
@@ -38,6 +40,8 @@ spec:
         app.kubernetes.io/part-of: platform
         app.kubernetes.io/component: search
         app.kubernetes.io/instance: "{{.env}}"
+      finalizers:
+        - resources-finalizer.argocd.argoproj.io
     spec:
       project: default
       sources:

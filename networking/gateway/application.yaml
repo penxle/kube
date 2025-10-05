@@ -6,6 +6,8 @@ metadata:
   labels:
     app.kubernetes.io/part-of: networking
     app.kubernetes.io/component: ingress
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
 

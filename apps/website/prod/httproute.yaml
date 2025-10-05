@@ -1,10 +1,7 @@
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
-  name: dex
-  namespace: dex
-  annotations:
-    external-dns.typie.io/enabled: "true"
+  name: website
 spec:
   parentRefs:
     - group: gateway.networking.k8s.io
@@ -12,15 +9,18 @@ spec:
       name: http
       namespace: infra
   hostnames:
-    - dex.typie.io
+    - typie.co
+    - auth.typie.co
+    - typie.me
+    - "*.typie.me"
   rules:
-    - matches:
+    - backendRefs:
+        - group: ""
+          kind: Service
+          name: website
+          port: 80
+          weight: 1
+      matches:
         - path:
             type: PathPrefix
             value: /
-      backendRefs:
-        - group: ""
-          kind: Service
-          name: dex
-          port: 5556
-          weight: 1
