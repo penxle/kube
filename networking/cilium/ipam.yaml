@@ -1,0 +1,11 @@
+apiVersion: cilium.io/v2
+kind: CiliumLoadBalancerIPPool
+metadata:
+  name: default
+spec:
+  blocks:
+    - start: "115.68.42.155"
+      stop: "115.68.42.158"
+  serviceSelector:
+    matchLabels:
+      cilium.typie.io/advertise-bgp: "true"

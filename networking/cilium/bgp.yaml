@@ -1,0 +1,50 @@
+apiVersion: cilium.io/v2
+kind: CiliumBGPClusterConfig
+metadata:
+  name: default
+spec:
+  bgpInstances:
+    - name: "65001"
+      localASN: 65001
+      peers:
+        - name: "65001"
+          peerASN: 65001
+          autoDiscovery:
+            mode: "DefaultGateway"
+            defaultGateway:
+              addressFamily: "ipv4"
+          peerConfigRef:
+            name: "default"
+---
+apiVersion: cilium.io/v2
+kind: CiliumBGPPeerConfig
+metadata:
+  name: default
+spec:
+  families:
+    - afi: "ipv4"
+      safi: "unicast"
+      advertisements:
+        matchLabels:
+          cilium.typie.io/advertise-bgp: "true"
+  gracefulRestart:
+    enabled: true
+---
+apiVersion: cilium.io/v2
+kind: CiliumBGPAdvertisement
+metadata:
+  name: default
+  labels:
+    cilium.typie.io/advertise-bgp: "true"
+spec:
+  advertisements:
+    - advertisementType: "Service"
+      service:
+        addresses: ["LoadBalancerIP"]
+      selector:
+        matchLabels:
+          cilium.typie.io/advertise-bgp: "true"
+      attributes:
+        localPreference: 100
+        communities:
+          standard: ["65001:100"]
