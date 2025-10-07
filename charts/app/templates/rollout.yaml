@@ -35,6 +35,8 @@ spec:
                     fieldPath: status.hostIP
             - name: OTEL_EXPORTER_OTLP_ENDPOINT
               value: "http://$(HOST_IP):4317"
+            - name: OTEL_LOG_LEVEL
+              value: "debug"
             {{- with .Values.env }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
