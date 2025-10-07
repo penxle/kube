@@ -26,6 +26,20 @@ kind: Cluster
 metadata:
   name: db
   namespace: dev
+  annotations:
+    ad.datadoghq.com/postgres.checks: |
+      {
+        "openmetrics": {
+          "init_config": {},
+          "instances": [
+            {
+              "openmetrics_endpoint": "http://%%host%%:9187/metrics",
+              "namespace": "postgres",
+              "metrics": [".*"]
+            }
+          ]
+        }
+      }
 spec:
   imageCatalogRef:
     apiGroup: postgresql.cnpg.io

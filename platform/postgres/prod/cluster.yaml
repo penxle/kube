@@ -26,6 +26,32 @@ kind: Cluster
 metadata:
   name: db
   namespace: prod
+  annotations:
+    ad.datadoghq.com/postgres.checks: |
+      {
+        "postgres": {
+          "instances": [
+            {
+              "dbm": true,
+              "host": "%%host%%",
+              "port": "5432",
+              "username": "datadog",
+              "dbname": "app",
+              "dbstrict": true,
+              "reported_hostname": "%%kube_pod_name%%"
+            }
+          ]
+        },
+        "openmetrics": {
+          "instances": [
+            {
+              "openmetrics_endpoint": "http://%%host%%:9187/metrics",
+              "namespace": "postgres",
+              "metrics": [".*"]
+            }
+          ]
+        }
+      }
 spec:
   imageCatalogRef:
     apiGroup: postgresql.cnpg.io
@@ -50,6 +76,11 @@ spec:
         superuser: true
         passwordSecret:
           name: db-credentials-root
+      - name: datadog
+        login: true
+        inRoles:
+          - pg_monitor
+        disablePassword: true
 
   primaryUpdateMethod: switchover
 
@@ -91,6 +122,9 @@ spec:
       autovacuum_analyze_scale_factor: "0.002"
       autovacuum_vacuum_cost_delay: 0ms
       autovacuum_vacuum_cost_limit: "10000"
+
+    pg_hba:
+      - host app datadog all trust
 
   replicationSlots:
     highAvailability:
@@ -181,5 +215,8 @@ spec:
     name: db
   name: app
   owner: app
+  schemas:
+    - name: public
+    - name: datadog
   extensions:
     - name: pgstattuple
