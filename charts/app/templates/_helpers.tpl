@@ -26,6 +26,8 @@ helm.sh/chart: {{ include "app.chart" . }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
+tags.datadoghq.com/env: {{ include "app.namespace" . }}
+tags.datadoghq.com/service: {{ include "app.fullname" . }}
 {{- end }}
 
 {{- define "app.selectorLabels" -}}

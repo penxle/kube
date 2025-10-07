@@ -18,7 +18,7 @@ spec:
   template:
     metadata:
       labels:
-        {{- include "app.selectorLabels" . | nindent 8 }}
+        {{- include "app.labels" . | nindent 8 }}
     spec:
       containers:
         - name: app
@@ -29,6 +29,12 @@ spec:
               value: "3000"
             - name: AWS_REGION
               value: "ap-northeast-2"
+            - name: HOST_IP
+              valueFrom:
+                fieldRef:
+                    fieldPath: status.hostIP
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: "http://$(HOST_IP):4317"
             {{- with .Values.env }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
