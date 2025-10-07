@@ -1,6 +1,10 @@
 global:
   domain: argocd.typie.io
 
+redis:
+  podAnnotations:
+    ad.datadoghq.com/exclude: "true"
+
 configs:
   cm:
     resource.customizations.ignoreDifferences.external-secrets.io_ExternalSecret:
