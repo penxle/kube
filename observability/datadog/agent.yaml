@@ -23,6 +23,9 @@ spec:
     processDiscovery:
       enabled: false
 
+    otelCollector:
+      enabled: true
+
   override:
     nodeAgent:
       tolerations:
