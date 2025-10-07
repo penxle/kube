@@ -97,6 +97,18 @@ spec:
 
             primary:
               replicaCount: 1
+              podAnnotations:
+                ad.datadoghq.com/valkey.checks: |
+                  {
+                    "redisdb": {
+                      "instances": [
+                        {
+                          "host": "%%host%%",
+                          "port": 6379
+                        }
+                      ]
+                    }
+                  }
               resources:
                 requests:
                   cpu: "{{.resources.cpu}}"
@@ -114,6 +126,18 @@ spec:
                       app.kubernetes.io/name: valkey
 
             replica:
+              podAnnotations:
+                ad.datadoghq.com/valkey.checks: |
+                  {
+                    "redisdb": {
+                      "instances": [
+                        {
+                          "host": "%%host%%",
+                          "port": 6379
+                        }
+                      ]
+                    }
+                  }
               resources:
                 requests:
                   cpu: "{{.resources.cpu}}"
