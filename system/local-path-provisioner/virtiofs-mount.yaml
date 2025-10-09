@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: virtiofs-mount
+  namespace: kube-system
+  labels:
+    app: virtiofs-mount
+spec:
+  selector:
+    matchLabels:
+      app: virtiofs-mount
+  template:
+    metadata:
+      labels:
+        app: virtiofs-mount
+    spec:
+      hostPID: true
+      hostNetwork: true
+      nodeSelector:
+        volumes.typie.io/local-path: "true"
+      initContainers:
+        - name: mount-virtiofs
+          image: busybox:latest
+          command:
+            - sh
+            - -c
+            - |
+              set -e
+              echo "Starting virtiofs mount process..."
+
+              if [ ! -d /host/var/mnt/data ]; then
+                echo "Creating mount point /var/mnt/data..."
+                mkdir -p /host/var/mnt/data
+              fi
+
+              if mount | grep -q '/host/var/mnt/data'; then
+                echo "virtiofs already mounted at /var/mnt/data"
+                exit 0
+              fi
+
+              echo "Mounting virtiofs to /var/mnt/data..."
+              mount -t virtiofs com.apple.virtio-fs.automount /host/var/mnt/data
+
+              echo "virtiofs mount completed successfully"
+          securityContext:
+            privileged: true
+          volumeMounts:
+            - name: host-root
+              mountPath: /host
+              mountPropagation: Bidirectional
+      containers:
+        - name: pause
+          image: registry.k8s.io/pause:3.10
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              cpu: 50m
+              memory: 32Mi
+      volumes:
+        - name: host-root
+          hostPath:
+            path: /
+            type: Directory
+      tolerations:
+        - effect: NoSchedule
+          operator: Exists
+        - effect: NoExecute
+          operator: Exists
