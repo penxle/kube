@@ -20,13 +20,17 @@ spec:
         volumes.typie.io/local-path: "true"
       initContainers:
         - name: mount-virtiofs
-          image: busybox:latest
+          image: alpine:3.21
+          imagePullPolicy: IfNotPresent
           command:
             - sh
             - -c
             - |
               set -e
               echo "Starting virtiofs mount process..."
+
+              echo "Installing util-linux for mount command..."
+              apk add --no-cache util-linux
 
               if [ ! -d /host/var/mnt/data ]; then
                 echo "Creating mount point /var/mnt/data..."
@@ -51,6 +55,7 @@ spec:
       containers:
         - name: pause
           image: registry.k8s.io/pause:3.10
+          imagePullPolicy: IfNotPresent
           resources:
             requests:
               cpu: 10m
