@@ -140,11 +140,11 @@ spec:
           cnpg.io/podRole: instance
 
   storage:
-    storageClass: zfs
+    storageClass: local-path
     size: 200Gi
 
   walStorage:
-    storageClass: zfs
+    storageClass: local-path
     size: 100Gi
 
   plugins:

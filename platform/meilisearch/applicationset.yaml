@@ -73,7 +73,7 @@ spec:
 
               persistence:
                 enabled: true
-                storageClass: zfs
+                storageClass: local-path
                 size: "{{.storage.size}}"
 
         - repoURL: https://github.com/penxle/kube
