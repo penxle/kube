@@ -145,7 +145,7 @@ spec:
 
   walStorage:
     storageClass: zfs
-    size: 50Gi
+    size: 100Gi
 
   plugins:
     - name: barman-cloud.cloudnative-pg.io
