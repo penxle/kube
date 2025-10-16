@@ -10,3 +10,4 @@ spec:
     advertiseRoutes:
       - 10.10.0.0/16
       - 10.20.0.0/16
+  exitNode: true
