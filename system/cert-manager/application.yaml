@@ -21,19 +21,6 @@ spec:
             enabled: true
           extraArgs:
             - --enable-gateway-api=true
-          extraEnv:
-            - name: AWS_REGION
-              value: ap-northeast-2
-            - name: AWS_ACCESS_KEY_ID
-              valueFrom:
-                secretKeyRef:
-                  name: cert-manager-aws
-                  key: AWS_ACCESS_KEY_ID
-            - name: AWS_SECRET_ACCESS_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: cert-manager-aws
-                  key: AWS_SECRET_ACCESS_KEY
 
     - repoURL: https://github.com/penxle/kube
       targetRevision: HEAD

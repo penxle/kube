@@ -17,7 +17,10 @@ spec:
       name: letsencrypt-staging
     solvers:
       - dns01:
-          route53: {}
+          cloudflare:
+            apiTokenSecretRef:
+              name: cert-manager-cloudflare
+              key: api-token
 ---
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
@@ -31,4 +34,7 @@ spec:
       name: letsencrypt
     solvers:
       - dns01:
-          route53: {}
+          cloudflare:
+            apiTokenSecretRef:
+              name: cert-manager-cloudflare
+              key: api-token
