@@ -17,7 +17,7 @@ spec:
       targetRevision: 1.19.0
       helm:
         valuesObject:
-          provider: aws
+          provider: cloudflare
           policy: sync
           interval: 1m
           triggerLoopOnEvent: true
@@ -29,21 +29,12 @@ spec:
           registry: txt
           txtOwnerId: k8s
           txtPrefix: ed-
-          extraArgs:
-            - --aws-zones-cache-duration=1h
           env:
-            - name: AWS_REGION
-              value: ap-northeast-2
-            - name: AWS_ACCESS_KEY_ID
+            - name: CF_API_TOKEN
               valueFrom:
                 secretKeyRef:
-                  name: external-dns-aws
-                  key: AWS_ACCESS_KEY_ID
-            - name: AWS_SECRET_ACCESS_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: external-dns-aws
-                  key: AWS_SECRET_ACCESS_KEY
+                  name: external-dns-cloudflare
+                  key: CF_API_TOKEN
 
     - repoURL: https://github.com/penxle/kube
       targetRevision: HEAD
