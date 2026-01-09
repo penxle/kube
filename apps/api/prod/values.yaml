@@ -5,7 +5,7 @@ image:
 
 resources:
   cpu: 1000m
-  memory: 2Gi
+  memory: 4Gi
 
 env:
   - name: PUBLIC_ENVIRONMENT
