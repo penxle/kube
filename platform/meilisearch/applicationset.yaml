@@ -19,8 +19,8 @@ spec:
             service:
               hostname: dev.search.typie.io
             resources:
-              cpu: 800m
-              memory: 4Gi
+              cpu: 200m
+              memory: 1Gi
             storage:
               size: 10Gi
 
