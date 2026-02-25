@@ -11,8 +11,6 @@ spec:
   backendServices:
     - name: api
       namespace: dev
-      number:
-        - 80
   resources:
     - "@type": type.googleapis.com/envoy.config.listener.v3.Listener
       name: api-l7-proxy
