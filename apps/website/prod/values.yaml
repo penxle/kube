@@ -23,3 +23,5 @@ hpa:
 pdb:
   enabled: true
   minAvailable: "50%"
+
+command: ["bun", "--inspect=127.0.0.1:9229", "run", "--cwd", "apps/website", "dist/index.js"]
