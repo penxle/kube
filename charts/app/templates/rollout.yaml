@@ -24,9 +24,6 @@ spec:
         - name: app
           image: "{{ .Values.image.name }}:{{ .Values.image.version }}"
           imagePullPolicy: IfNotPresent
-          {{- with .Values.command }}
-          command: {{ toJson . }}
-          {{- end }}
           env:
             - name: LISTEN_PORT
               value: "3000"

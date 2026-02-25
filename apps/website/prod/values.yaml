@@ -1,7 +1,5 @@
 fullnameOverride: "website"
 
-command: ["bun", "--inspect=127.0.0.1:9229", "run", "dist/index.js"]
-
 image:
   name: ghcr.io/penxle/website
 
