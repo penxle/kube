@@ -16,4 +16,4 @@ env:
 secrets:
   - website-doppler
 
-command: ["bun", "--inspect=127.0.0.1:9229", "run", "dist/index.js"]
+command: ["bun", "--inspect=127.0.0.1:9229", "run", "--cwd", "apps/website", "dist/index.js"]
