@@ -8,6 +8,9 @@ spec:
   services:
     - name: api
       namespace: dev
+  backendServices:
+    - name: api
+      namespace: dev
   resources:
     - "@type": type.googleapis.com/envoy.config.listener.v3.Listener
       name: api-l7-proxy
@@ -19,19 +22,22 @@ spec:
                 stat_prefix: api-l7-proxy
                 upgrade_configs:
                   - upgrade_type: websocket
-                route_config:
-                  virtual_hosts:
-                    - name: default
-                      domains: ["*"]
-                      routes:
-                        - match:
-                            prefix: "/"
-                          route:
-                            cluster: "dev/api"
+                rds:
+                  route_config_name: api-l7-proxy-route
                 http_filters:
                   - name: envoy.filters.http.router
                     typed_config:
                       "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
+    - "@type": type.googleapis.com/envoy.config.route.v3.RouteConfiguration
+      name: api-l7-proxy-route
+      virtual_hosts:
+        - name: default
+          domains: ["*"]
+          routes:
+            - match:
+                prefix: "/"
+              route:
+                cluster: "dev/api"
     - "@type": type.googleapis.com/envoy.config.cluster.v3.Cluster
       name: "dev/api"
       connect_timeout: 5s
