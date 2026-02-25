@@ -76,6 +76,7 @@ spec:
         syncOptions:
           - CreateNamespace=true
           - ServerSideApply=true
+          - RespectIgnoreDifferences=true
       ignoreDifferences:
         - group: ""
           kind: Service
