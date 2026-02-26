@@ -23,6 +23,7 @@ spec:
               memory: 1Gi
             storage:
               size: 10Gi
+            dumpUid: "20260226-070401550"
 
           - env: prod
             service:
@@ -32,6 +33,7 @@ spec:
               memory: 4Gi
             storage:
               size: 20Gi
+            dumpUid: "20260226-070043545"
 
   template:
     metadata:
@@ -47,12 +49,12 @@ spec:
       sources:
         - chart: meilisearch
           repoURL: https://meilisearch.github.io/meilisearch-kubernetes
-          targetRevision: 0.17.1
+          targetRevision: 0.25.1
           helm:
             releaseName: meilisearch
             valuesObject:
               image:
-                tag: v1.22.0
+                tag: v1.36.0
 
               resources:
                 requests:
@@ -65,6 +67,8 @@ spec:
 
               environment:
                 MEILI_ENV: production
+                MEILI_IMPORT_DUMP: /meili_data/dumps/{{.dumpUid}}.dump
+                MEILI_IGNORE_MISSING_DUMP: "true"
 
               service:
                 annotations:
