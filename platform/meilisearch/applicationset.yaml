@@ -52,7 +52,7 @@ spec:
             releaseName: meilisearch
             valuesObject:
               image:
-                tag: v1.35.0
+                tag: v1.36.0
 
               resources:
                 requests:
