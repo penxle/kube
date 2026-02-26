@@ -14,7 +14,7 @@ spec:
   sources:
     - chart: local-path-provisioner
       repoURL: https://charts.containeroo.ch
-      targetRevision: 0.0.33
+      targetRevision: 0.0.35
       helm:
         valuesObject:
           storageClass:
