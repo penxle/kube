@@ -34,9 +34,15 @@ configs:
         - .spec.startDelay
         - .spec.stopDelay
         - .spec.switchoverDelay
+        - .spec.bootstrap.initdb.database
+        - .spec.bootstrap.initdb.encoding
+        - .spec.bootstrap.initdb.localeCType
+        - .spec.bootstrap.initdb.localeCollate
+        - .spec.bootstrap.initdb.owner
         - .spec.managed.roles[].connectionLimit
         - .spec.managed.roles[].ensure
         - .spec.managed.roles[].inherit
+        - .spec.plugins[].enabled
         - .spec.postgresql.syncReplicaElectionConstraint
         - .spec.postgresql.parameters.archive_mode
         - .spec.postgresql.parameters.archive_timeout
@@ -61,6 +67,8 @@ configs:
         - .spec.replicationSlots.highAvailability.slotPrefix
         - .spec.replicationSlots.synchronizeReplicas
         - .spec.replicationSlots.updateInterval
+        - .spec.storage.resizeInUseVolumes
+        - .spec.walStorage.resizeInUseVolumes
 
     resource.customizations.ignoreDifferences.postgresql.cnpg.io_Database: |
       jqPathExpressions:
