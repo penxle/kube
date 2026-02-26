@@ -7,6 +7,6 @@ spec:
   generator:
     passwordSpec:
       length: 32
-      symbolCharacters: "-_.*!~"
+      symbolCharacters: "-_."
       noUpper: false
       allowRepeat: true
