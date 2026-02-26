@@ -17,6 +17,56 @@ configs:
       - field: spec.template.spec
         type: core/v1/PodSpec
 
+    resource.customizations.ignoreDifferences.postgresql.cnpg.io_Cluster: |
+      jqPathExpressions:
+        - .spec.affinity
+        - .spec.enableSuperuserAccess
+        - .spec.failoverDelay
+        - .spec.logLevel
+        - .spec.maxSyncReplicas
+        - .spec.minSyncReplicas
+        - .spec.monitoring
+        - .spec.postgresGID
+        - .spec.postgresUID
+        - .spec.primaryUpdateStrategy
+        - .spec.probes
+        - .spec.smartShutdownTimeout
+        - .spec.startDelay
+        - .spec.stopDelay
+        - .spec.switchoverDelay
+        - .spec.managed.roles[].connectionLimit
+        - .spec.managed.roles[].ensure
+        - .spec.managed.roles[].inherit
+        - .spec.postgresql.syncReplicaElectionConstraint
+        - .spec.postgresql.parameters.archive_mode
+        - .spec.postgresql.parameters.archive_timeout
+        - .spec.postgresql.parameters.dynamic_shared_memory_type
+        - .spec.postgresql.parameters.full_page_writes
+        - .spec.postgresql.parameters.log_destination
+        - .spec.postgresql.parameters.log_directory
+        - .spec.postgresql.parameters.log_filename
+        - .spec.postgresql.parameters.log_rotation_age
+        - .spec.postgresql.parameters.log_rotation_size
+        - .spec.postgresql.parameters.log_truncate_on_rotation
+        - .spec.postgresql.parameters.logging_collector
+        - .spec.postgresql.parameters.max_replication_slots
+        - .spec.postgresql.parameters.shared_memory_type
+        - .spec.postgresql.parameters.shared_preload_libraries
+        - .spec.postgresql.parameters.ssl_max_protocol_version
+        - .spec.postgresql.parameters.ssl_min_protocol_version
+        - .spec.postgresql.parameters.wal_level
+        - .spec.postgresql.parameters.wal_log_hints
+        - .spec.postgresql.parameters.wal_receiver_timeout
+        - .spec.postgresql.parameters.wal_sender_timeout
+        - .spec.replicationSlots.highAvailability.slotPrefix
+        - .spec.replicationSlots.synchronizeReplicas
+        - .spec.replicationSlots.updateInterval
+
+    resource.customizations.ignoreDifferences.postgresql.cnpg.io_Database: |
+      jqPathExpressions:
+        - .spec.databaseReclaimPolicy
+        - .spec.ensure
+
     resource.exclusions: |
       - apiGroups:
         - discovery.k8s.io
