@@ -13,6 +13,10 @@ configs:
         - .spec.data[].remoteRef | .conversionStrategy, .decodingStrategy, .metadataPolicy
         - .spec.dataFrom[].find | .conversionStrategy, .decodingStrategy
 
+    resource.customizations.knownTypeFields.argoproj.io_Rollout: |
+      - field: spec.template.spec
+        type: core/v1/PodSpec
+
 server:
   ingress:
     enabled: true
