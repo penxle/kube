@@ -11,12 +11,23 @@ metadata:
 spec:
   project: default
 
-  source:
-    repoURL: https://github.com/penxle/kube
-    targetRevision: HEAD
-    path: networking/cilium
-    directory:
-      exclude: application.yaml
+  sources:
+    - chart: cilium
+      repoURL: https://helm.cilium.io/
+      targetRevision: 1.18.2
+      helm:
+        valueFiles:
+          - $values/bootstrap/cilium/values.yaml
+
+    - repoURL: https://github.com/penxle/kube
+      targetRevision: HEAD
+      ref: values
+
+    - repoURL: https://github.com/penxle/kube
+      targetRevision: HEAD
+      path: networking/cilium
+      directory:
+        exclude: application.yaml
 
   destination:
     server: https://kubernetes.default.svc
