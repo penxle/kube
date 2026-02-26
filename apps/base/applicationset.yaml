@@ -80,5 +80,9 @@ spec:
       ignoreDifferences:
         - group: ""
           kind: Service
-          jsonPointers:
-            - /spec/selector
+          managedFieldsManagers:
+            - rollouts-controller
+        - group: argoproj.io
+          kind: Rollout
+          managedFieldsManagers:
+            - kubectl-argo-rollouts
