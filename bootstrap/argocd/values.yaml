@@ -6,6 +6,9 @@ redis:
     ad.datadoghq.com/exclude: "true"
 
 configs:
+  params:
+    server.insecure: "true"
+
   cm:
     resource.customizations.ignoreDifferences.external-secrets.io_ExternalSecret:
       |
@@ -97,21 +100,3 @@ configs:
         - CiliumEndpoint
         - CiliumEndpointSlice
 
-server:
-  ingress:
-    enabled: true
-    ingressClassName: cilium
-
-    annotations:
-      ingress.cilium.io/tls-passthrough: enabled
-      ingress.cilium.io/force-https: enabled
-      external-dns.typie.io/enabled: "true"
-
-    tls: true
-
-  certificate:
-    enabled: true
-    issuer:
-      group: cert-manager.io
-      kind: ClusterIssuer
-      name: letsencrypt

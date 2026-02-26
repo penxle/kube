@@ -23,6 +23,12 @@ spec:
       targetRevision: HEAD
       ref: values
 
+    - repoURL: https://github.com/penxle/kube
+      targetRevision: HEAD
+      path: system/argocd
+      directory:
+        exclude: application.yaml
+
   destination:
     server: https://kubernetes.default.svc
     namespace: argocd
