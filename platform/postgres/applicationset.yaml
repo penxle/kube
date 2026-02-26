@@ -39,6 +39,16 @@ spec:
         server: https://kubernetes.default.svc
         namespace: "{{.env}}"
 
+      ignoreDifferences:
+        - group: postgresql.cnpg.io
+          kind: Cluster
+          managedFieldsManagers:
+            - manager
+        - group: postgresql.cnpg.io
+          kind: Database
+          managedFieldsManagers:
+            - manager
+
       syncPolicy:
         automated:
           prune: true
