@@ -76,19 +76,6 @@ spec:
                 storageClass: local-path
                 size: "{{.storage.size}}"
 
-              {{- if eq .env "dev" }}
-              initContainers:
-                - name: reset-db
-                  image: busybox
-                  command:
-                    - sh
-                    - -c
-                    - rm -rf /meili_data/data.ms
-                  volumeMounts:
-                    - name: data
-                      mountPath: /meili_data
-              {{- end }}
-
         - repoURL: https://github.com/penxle/kube
           targetRevision: HEAD
           path: platform/meilisearch/{{.env}}
