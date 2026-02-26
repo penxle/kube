@@ -14,12 +14,23 @@ helm upgrade --install cilium cilium/cilium \
   --namespace kube-system \
   --values "$SCRIPT_DIR/cilium/values.yaml"
 
-echo "Installing ArgoCD..."
+echo "Installing ArgoCD (with CRDs)..."
+# NOTE: ArgoCD Application manages ArgoCD with crds.install=false.
+# CRDs are only applied here (initial install or manual upgrade).
 helm upgrade --install argocd argocd/argo-cd \
-  --version 8.5.9 \
+  --version 9.4.4 \
   --namespace argocd \
   --create-namespace \
   --values "$SCRIPT_DIR/argocd/values.yaml"
+
+echo "Migrating ArgoCD CRDs to SSA ownership..."
+# ArgoCD manages itself with ServerSideApply. Kubernetes auto-migrates CSA→SSA
+# ownership when SSA is first applied, but this migration fails with resourceVersion=0.
+# Removing the last-applied-configuration annotation prevents the migration from
+# being triggered, letting ArgoCD take fresh SSA ownership on first sync.
+for crd in appprojects.argoproj.io applications.argoproj.io applicationsets.argoproj.io; do
+  kubectl annotate crd "$crd" kubectl.kubernetes.io/last-applied-configuration-
+done
 
 echo "Applying root Application..."
 kubectl apply -f "$SCRIPT_DIR/../root.yaml"
