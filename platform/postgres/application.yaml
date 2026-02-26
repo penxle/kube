@@ -14,7 +14,7 @@ spec:
   sources:
     - chart: cloudnative-pg
       repoURL: https://cloudnative-pg.github.io/charts
-      targetRevision: 0.26.0
+      targetRevision: 0.27.1
       helm:
         valuesObject:
           config:
@@ -23,7 +23,7 @@ spec:
 
     - chart: plugin-barman-cloud
       repoURL: https://cloudnative-pg.github.io/charts
-      targetRevision: 0.2.0
+      targetRevision: 0.5.0
 
   destination:
     server: https://kubernetes.default.svc
