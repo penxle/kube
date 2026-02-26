@@ -80,6 +80,25 @@ spec:
                 storageClass: local-path
                 size: "{{.storage.size}}"
 
+              startupProbe:
+                failureThreshold: 600
+
+              initContainers:
+                - name: prepare-import
+                  image: busybox
+                  command:
+                    - sh
+                    - -c
+                    - |
+                      DUMP="/meili_data/dumps/{{.dumpUid}}.dump"
+                      if [ -f "$DUMP" ]; then
+                        echo "Dump file found, removing data.ms for clean import"
+                        rm -rf /meili_data/data.ms
+                      fi
+                  volumeMounts:
+                    - name: data
+                      mountPath: /meili_data
+
         - repoURL: https://github.com/penxle/kube
           targetRevision: HEAD
           path: platform/meilisearch/{{.env}}
