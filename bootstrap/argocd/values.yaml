@@ -66,6 +66,8 @@ configs:
       jqPathExpressions:
         - .spec.databaseReclaimPolicy
         - .spec.ensure
+        - .spec.extensions[].ensure
+        - .spec.schemas[].ensure
 
     resource.exclusions: |
       - apiGroups:
