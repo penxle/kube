@@ -58,17 +58,19 @@ spec:
               path: /healthz/liveness
               port: 3000
             initialDelaySeconds: 10
-            periodSeconds: 10
+            timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
+            periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
             successThreshold: 1
-            failureThreshold: 6
+            failureThreshold: {{ .Values.livenessProbe.failureThreshold }}
           readinessProbe:
             httpGet:
               path: /healthz/readiness
               port: 3000
             initialDelaySeconds: 10
-            periodSeconds: 10
+            timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
+            periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
             successThreshold: 1
-            failureThreshold: 3
+            failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
       topologySpreadConstraints:
         - maxSkew: 1
           topologyKey: kubernetes.io/hostname

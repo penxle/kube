@@ -7,6 +7,16 @@ resources:
   cpu: 1000m
   memory: 4Gi
 
+livenessProbe:
+  timeoutSeconds: 3
+  periodSeconds: 10
+  failureThreshold: 6
+
+readinessProbe:
+  timeoutSeconds: 3
+  periodSeconds: 10
+  failureThreshold: 3
+
 env:
   - name: PUBLIC_ENVIRONMENT
     value: "prod"

@@ -5,7 +5,17 @@ image:
 
 resources:
   cpu: 1000m
-  memory: 2Gi
+  memory: 4Gi
+
+livenessProbe:
+  timeoutSeconds: 5
+  periodSeconds: 15
+  failureThreshold: 4
+
+readinessProbe:
+  timeoutSeconds: 5
+  periodSeconds: 15
+  failureThreshold: 3
 
 env:
   - name: PUBLIC_ENVIRONMENT

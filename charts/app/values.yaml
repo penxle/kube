@@ -15,6 +15,16 @@ env: []
 
 secrets: []
 
+livenessProbe:
+  timeoutSeconds: 1
+  periodSeconds: 10
+  failureThreshold: 6
+
+readinessProbe:
+  timeoutSeconds: 1
+  periodSeconds: 10
+  failureThreshold: 3
+
 hpa:
   enabled: false
   minReplicas: 2
