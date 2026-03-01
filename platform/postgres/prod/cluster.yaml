@@ -126,6 +126,8 @@ spec:
       autovacuum_analyze_scale_factor: "0.002"
       autovacuum_vacuum_cost_delay: 0ms
       autovacuum_vacuum_cost_limit: "10000"
+      hot_standby_feedback: "on"
+      max_standby_streaming_delay: 300s
 
     pg_hba:
       - host app datadog all trust
