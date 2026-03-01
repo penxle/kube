@@ -19,8 +19,11 @@ spec:
             service:
               hostname: dev.search.typie.io
             resources:
-              cpu: 200m
-              memory: 1Gi
+              requests:
+                cpu: 200m
+                memory: 512Mi
+              limits:
+                memory: 1Gi
             storage:
               size: 10Gi
 
@@ -28,8 +31,11 @@ spec:
             service:
               hostname: search.typie.io
             resources:
-              cpu: 500m
-              memory: 4Gi
+              requests:
+                cpu: 500m
+                memory: 2Gi
+              limits:
+                memory: 4Gi
             storage:
               size: 20Gi
 
@@ -56,9 +62,10 @@ spec:
 
               resources:
                 requests:
-                  cpu: "{{.resources.cpu}}"
+                  cpu: "{{.resources.requests.cpu}}"
+                  memory: "{{.resources.requests.memory}}"
                 limits:
-                  memory: "{{.resources.memory}}"
+                  memory: "{{.resources.limits.memory}}"
 
               auth:
                 existingMasterKeySecret: meilisearch-master-key

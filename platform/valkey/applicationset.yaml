@@ -22,8 +22,11 @@ spec:
               maxmemory: 256mb
             replicas: 1
             resources:
-              cpu: 200m
-              memory: 512Mi
+              requests:
+                cpu: 200m
+                memory: 256Mi
+              limits:
+                memory: 512Mi
             storage:
               size: 10Gi
 
@@ -34,8 +37,11 @@ spec:
               maxmemory: 1536mb
             replicas: 3
             resources:
-              cpu: 500m
-              memory: 2Gi
+              requests:
+                cpu: 500m
+                memory: 256Mi
+              limits:
+                memory: 2Gi
             storage:
               size: 20Gi
 
@@ -90,6 +96,7 @@ spec:
               resources:
                 requests:
                   cpu: 100m
+                  memory: 128Mi
                 limits:
                   memory: 256Mi
               service:
@@ -113,9 +120,10 @@ spec:
                   }
               resources:
                 requests:
-                  cpu: "{{.resources.cpu}}"
+                  cpu: "{{.resources.requests.cpu}}"
+                  memory: "{{.resources.requests.memory}}"
                 limits:
-                  memory: "{{.resources.memory}}"
+                  memory: "{{.resources.limits.memory}}"
               persistence:
                 storageClass: local-path
                 size: "{{.storage.size}}"
@@ -142,9 +150,10 @@ spec:
                   }
               resources:
                 requests:
-                  cpu: "{{.resources.cpu}}"
+                  cpu: "{{.resources.requests.cpu}}"
+                  memory: "{{.resources.requests.memory}}"
                 limits:
-                  memory: "{{.resources.memory}}"
+                  memory: "{{.resources.limits.memory}}"
               persistence:
                 storageClass: local-path
                 size: "{{.storage.size}}"
