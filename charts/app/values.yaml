@@ -25,6 +25,7 @@ livenessProbe:
   failureThreshold: 6
 
 readinessProbe:
+  enabled: true
   timeoutSeconds: 1
   periodSeconds: 10
   failureThreshold: 3

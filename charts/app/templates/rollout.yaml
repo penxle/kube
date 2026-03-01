@@ -70,6 +70,7 @@ spec:
             successThreshold: 1
             failureThreshold: {{ .Values.livenessProbe.failureThreshold }}
           {{- end }}
+          {{- if .Values.readinessProbe.enabled }}
           readinessProbe:
             httpGet:
               path: /healthz/readiness
@@ -79,6 +80,7 @@ spec:
             periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
             successThreshold: 1
             failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
+          {{- end }}
       topologySpreadConstraints:
         - maxSkew: 1
           topologyKey: kubernetes.io/hostname
