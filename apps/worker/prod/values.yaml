@@ -11,9 +11,7 @@ resources:
     memory: 4Gi
 
 livenessProbe:
-  timeoutSeconds: 5
-  periodSeconds: 15
-  failureThreshold: 4
+  enabled: false
 
 readinessProbe:
   timeoutSeconds: 5

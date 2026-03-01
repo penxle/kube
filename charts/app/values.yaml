@@ -19,6 +19,7 @@ env: []
 secrets: []
 
 livenessProbe:
+  enabled: true
   timeoutSeconds: 1
   periodSeconds: 10
   failureThreshold: 6

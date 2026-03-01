@@ -59,6 +59,7 @@ spec:
               {{- end }}
               memory: {{ .memory }}
             {{- end }}
+          {{- if .Values.livenessProbe.enabled }}
           livenessProbe:
             httpGet:
               path: /healthz/liveness
@@ -68,6 +69,7 @@ spec:
             periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
             successThreshold: 1
             failureThreshold: {{ .Values.livenessProbe.failureThreshold }}
+          {{- end }}
           readinessProbe:
             httpGet:
               path: /healthz/readiness

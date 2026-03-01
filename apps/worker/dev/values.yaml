@@ -12,6 +12,9 @@ resources:
   limits:
     memory: 2Gi
 
+livenessProbe:
+  enabled: false
+
 env:
   - name: PUBLIC_ENVIRONMENT
     value: "dev"
