@@ -197,6 +197,45 @@ spec:
       server_login_retry: "0"
 ---
 apiVersion: postgresql.cnpg.io/v1
+kind: Pooler
+metadata:
+  name: db-pooler-r
+  namespace: prod
+spec:
+  cluster:
+    name: db
+
+  instances: 2
+  type: ro
+
+  template:
+    spec:
+      containers: []
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector:
+            matchLabels:
+              cnpg.io/poolerName: db-pooler-r
+
+  serviceTemplate:
+    metadata:
+      annotations:
+        external-dns.typie.io/enabled: "true"
+        external-dns.alpha.kubernetes.io/internal-hostname: db-r.typie.io
+
+  pgbouncer:
+    poolMode: transaction
+    parameters:
+      max_client_conn: "1000"
+      min_pool_size: "10"
+      default_pool_size: "25"
+      reserve_pool_size: "25"
+      server_check_delay: "1"
+      server_login_retry: "0"
+---
+apiVersion: postgresql.cnpg.io/v1
 kind: ScheduledBackup
 metadata:
   name: db
