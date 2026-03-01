@@ -50,9 +50,15 @@ spec:
           {{- end }}
           resources:
             requests:
-              cpu: {{ .Values.resources.cpu }}
+              cpu: {{ .Values.resources.requests.cpu }}
+              memory: {{ .Values.resources.requests.memory }}
+            {{- with .Values.resources.limits }}
             limits:
-              memory: {{ .Values.resources.memory }}
+              {{- with .cpu }}
+              cpu: {{ . }}
+              {{- end }}
+              memory: {{ .memory }}
+            {{- end }}
           livenessProbe:
             httpGet:
               path: /healthz/liveness

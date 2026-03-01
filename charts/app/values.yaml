@@ -8,8 +8,11 @@ image:
   version: latest
 
 resources:
-  cpu: "100m"
-  memory: "128Mi"
+  requests:
+    cpu: "100m"
+    memory: "128Mi"
+  limits:
+    memory: "128Mi"
 
 env: []
 

@@ -6,8 +6,11 @@ image:
   name: ghcr.io/penxle/website
 
 resources:
-  cpu: 1000m
-  memory: 2Gi
+  requests:
+    cpu: 1000m
+    memory: 256Mi
+  limits:
+    memory: 2Gi
 
 env:
   - name: PUBLIC_ENVIRONMENT
