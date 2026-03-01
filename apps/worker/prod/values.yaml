@@ -16,11 +16,6 @@ livenessProbe:
 readinessProbe:
   enabled: false
 
-readinessProbe:
-  timeoutSeconds: 5
-  periodSeconds: 15
-  failureThreshold: 3
-
 env:
   - name: PUBLIC_ENVIRONMENT
     value: "prod"
